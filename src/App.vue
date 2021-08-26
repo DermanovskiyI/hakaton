@@ -1,30 +1,86 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="wrapper">
+    <section class="hero">
+      <div class="container">
+        <div class="search">
+          <div class="search__text">enter the name of the pokemon</div>
+          <div class="search__block">
+            <input type="text" class="search__input" />
+            <button class="search__btn">search</button>
+          </div>
+        </div>
+        <div class="pokemons">
+          <router-view></router-view>
+        </div>
+      </div>
+    </section>
   </div>
-  <router-view/>
 </template>
 
-<style lang="scss">
+<style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  height: 100%;
 }
 
-#nav {
-  padding: 30px;
+.wrapper {
+  min-width: 0;
+  height: 100%;
+  width: 100%;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+.container {
+  width: auto;
+  max-width: 918px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+
+  li {
+    list-style-type: none;
   }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: normal;
+}
+
+p {
+  margin: 0;
+}
+a {
+  color: black;
+  text-decoration: none;
+}
+img {
+  max-width: 100%;
+}
+.search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.search__text {
+  margin-bottom: 20px;
+}
+.search__input {
+  margin-right: 20px;
 }
 </style>
