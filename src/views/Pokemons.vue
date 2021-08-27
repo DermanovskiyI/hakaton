@@ -1,20 +1,33 @@
 <template>
   <table class="pokemons">
     <thead>
+      <!-- <pre>{{pokemons[0].abilities[0].name}}</pre> -->
+      <!-- <pre>{{pokemons[0].abilities[0].desc}}</pre> -->
       <tr>
         <th>Name</th>
         <th>Stats</th>
         <th>Abilities</th>
       </tr>
     </thead>
-    <pokemons-item></pokemons-item>
+    <pokemons-item
+      v-for="pokemon in pokemons"
+      :key="pokemon.id"
+      :pokemon="pokemon"
+    >
+    </pokemons-item>
   </table>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import PokemonsItem from '../components/PokemonsItem.vue';
 
 export default {
+  computed: {
+    ...mapState({
+      pokemons: (state) => state.pokemons,
+    }),
+  },
   components: {
     PokemonsItem,
   },

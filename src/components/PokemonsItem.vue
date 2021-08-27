@@ -1,52 +1,51 @@
 <template>
     <tbody class="pokemons__item">
+      <!-- <pre>{{pokemon.abilities }}</pre> -->
+      <!-- <pre>{{pokemon.abilities[1].id }}</pre> -->
       <tr>
-        <td><strong>showSpeed</strong></td>
-        <td>15</td>
-        <td>The speed of the show/reveal</td>
-      </tr>
-      <tr>
-        <td><strong>showEasing</strong></td>
-        <td>'linear'</td>
-        <td>The easing of the show/reveal</td>
-      </tr>
-      <!-- <tr>
-        <td><strong>hideSpeed</strong></td>
-        <td>50</td>
-        <td>The speed of the hide/conceal</td>
-      </tr>
-      <tr>
-        <td><strong>hideEasing</strong></td>
-        <td>'linear'</td>
-        <td>The easing of the hide/conceal</td>
-      </tr>
-      <tr>
-        <td><strong>width</strong></td>
-        <td>'auto'</td>
+        <td><strong>{{pokemon.name}}</strong></td>
         <td>
-          The width that the data will be truncated to -
-          <em>('auto' or px amount)</em>
+          <pokemons-stat
+            v-for="stat in pokemon.stats"
+            :key="stat.name"
+            :stat="stat"
+          >
+          </pokemons-stat>
+        </td>
+        <td>
+          <pokemon-abilities
+            v-for="ability in pokemon.abilities"
+            :key="ability.id"
+            :ability="ability"
+          >
+          </pokemon-abilities>
         </td>
       </tr>
-      <tr>
-        <td><strong>ellipsis</strong></td>
-        <td>true</td>
-        <td>Set to true to enable the ellipsis</td>
-      </tr>
-      <tr>
-        <td><strong>title</strong></td>
-        <td>false</td>
-        <td>Set to true to show the full data on hover</td>
-      </tr>
-      <tr>
-        <td><strong>afterShow</strong></td>
-        <td>$.noop</td>
-        <td>The callback fired after the show/reveal</td>
-      </tr>
-      <tr>
-        <td><strong>afterHide</strong></td>
-        <td>$.noop</td>
-        <td>The callback fired after the hide/conceal</td>
-      </tr> -->
     </tbody>
 </template>
+
+<script>
+// import { mapState } from 'vuex';
+import PokemonsStat from './PokemonsStat.vue';
+import PokemonAbilities from './PokemonAbilities.vue';
+
+export default {
+  components: {
+    PokemonsStat,
+    PokemonAbilities,
+  },
+  props: {
+    pokemon: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  // computed: {
+  //   ...mapState({
+  //     abilities: (state) => state.abilities,
+  //     pokemons: (state) => state.pokemons,
+  //   }),
+  // },
+
+};
+</script>
