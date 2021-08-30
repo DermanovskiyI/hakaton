@@ -1,7 +1,5 @@
 <template>
     <tbody class="pokemons__item">
-      <!-- <pre>{{pokemon.abilities }}</pre> -->
-      <!-- <pre>{{pokemon.abilities[1].id }}</pre> -->
       <tr>
         <td><strong>{{pokemon.name}}</strong></td>
         <td>

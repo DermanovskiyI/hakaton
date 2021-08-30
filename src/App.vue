@@ -19,7 +19,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
-import { SET_POKEMON, SET_ABILITIES } from './store/mutation.types';
+import { SET_POKEMON } from './store/mutation.types';
 
 export default {
   computed: {
@@ -33,36 +33,18 @@ export default {
       pokemonURL: 'https://pokeapi.co/api/v2/pokemon/',
       id: 0,
       pokemonAbilityURL: 'https://pokeapi.co/api/v2/ability/',
-      // abilities: [],
-      // abilityDesc: [],
       pokemon: {},
     };
   },
   methods: {
-    ...mapMutations([SET_POKEMON, SET_ABILITIES]),
+    ...mapMutations([SET_POKEMON]),
     addPokemon() {
       const promise = fetch(`${this.pokemonURL}${this.name}/`);
       promise.then((response) => response.json()).then((result) => {
-        // this.SET_POKEMON({
-        //   id: this.id,
-        //   name: result.name,
-        //   abilities: result.abilities,
-        //   stats: result.stats,
-        // });
-        // result.abilities.forEach((item) => {
-        //   const { name } = item.ability;
-        //   this.abilities.push(name);
-        // });
-
-        // this.SET_ABILITIES(this.addAbilities());
-        // this.id += 1;
-        // this.abilities = [];
-
         const abilities = [];
 
         this.pokemon.id = this.id;
         this.pokemon.name = result.name;
-        // this.pokemon.abilities = result.abilities;
         this.pokemon.stats = result.stats;
 
         result.abilities.forEach((item) => {
@@ -71,35 +53,20 @@ export default {
         });
         return abilities;
       })
-        .then((abilities) => this.addAbilities(abilities))
         .then((abilities) => {
-          // console.log(this.pokemon);
-          // console.log(desc);
-          this.SET_POKEMON(
-            { ...this.pokemon, abilities },
-          );
-          this.pokemon = {};
-          // this.SET_POKEMON(this.pokemon);
-          this.id += 1;
+          const requests = abilities.map((ability) => fetch(`${this.pokemonAbilityURL}${ability}`));
+          Promise.all(requests)
+            .then((abilitiesDesc) => Promise.all(abilitiesDesc.map((desc) => desc.json())))
+            .then((result) => {
+              const abilityDesc = [];
+              result.forEach((desc, ndx) => {
+                abilityDesc.push({ desc: desc.effect_entries[1].effect, id: ndx, name: desc.name });
+              });
+              this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
+            });
         });
     },
-    addAbilities(abilities) {
-      // const abilityDesc = {};
-      const abilityDesc = [];
-      let abilityId = 0;
-      abilities.forEach((ability) => {
-        const getAbilities = fetch(`${this.pokemonAbilityURL}${ability}/`);
-        // getAbilities.then((response) => response.json()).then((result) => {
-        //   abilityDesc[ability] = result.effect_entries[1].effect;
-        // });
-        getAbilities.then((response) => response.json()).then((result) => {
-          abilityDesc.push({ name: ability, desc: result.effect_entries[1].effect, id: abilityId });
-          // this.pokemon.abilities = abilityDesc;
-          abilityId = +1;
-        });
-      });
-      return abilityDesc;
-    },
+
   },
 };
 </script>
