@@ -39,32 +39,40 @@ export default {
   methods: {
     ...mapMutations([SET_POKEMON]),
     addPokemon() {
-      const promise = fetch(`${this.pokemonURL}${this.name}/`);
-      promise.then((response) => response.json()).then((result) => {
-        const abilities = [];
+      if (!this.pokemons.find((pokemon) => pokemon.name === this.name)) {
+        const promise = fetch(`${this.pokemonURL}${this.name}/`);
+        promise.then((response) => response.json()).then((result) => {
+          const abilities = [];
 
-        this.pokemon.id = this.id;
-        this.pokemon.name = result.name;
-        this.pokemon.stats = result.stats;
+          this.pokemon.id = this.id;
+          this.pokemon.name = result.name;
+          this.pokemon.stats = result.stats;
 
-        result.abilities.forEach((item) => {
-          const { name } = item.ability;
-          abilities.push(name);
-        });
-        return abilities;
-      })
-        .then((abilities) => {
-          const requests = abilities.map((ability) => fetch(`${this.pokemonAbilityURL}${ability}`));
-          Promise.all(requests)
-            .then((abilitiesDesc) => Promise.all(abilitiesDesc.map((desc) => desc.json())))
-            .then((result) => {
-              const abilityDesc = [];
-              result.forEach((desc, ndx) => {
-                abilityDesc.push({ desc: desc.effect_entries[1].effect, id: ndx, name: desc.name });
+          result.abilities.forEach((item) => {
+            const { name } = item.ability;
+            abilities.push(name);
+          });
+          return abilities;
+        })
+          .then((abilities) => {
+            const requests = abilities.map((ability) => fetch(`${this.pokemonAbilityURL}${ability}`));
+            Promise.all(requests)
+              .then((abilitiesDesc) => Promise.all(abilitiesDesc.map((desc) => desc.json())))
+              .then((result) => {
+                const abilityDesc = [];
+                result.forEach((desc, ndx) => {
+                  abilityDesc.push(
+                    {
+                      desc: desc.effect_entries[1].effect,
+                      id: ndx,
+                      name: desc.name,
+                    },
+                  );
+                });
+                this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
               });
-              this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
-            });
-        });
+          });
+      }
     },
 
   },
