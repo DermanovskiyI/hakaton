@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { SET_POKEMON, SORT_POKEMON } from './mutation.types';
+import { SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS } from './mutation.types';
 
 export default createStore({
   state: {
@@ -18,6 +18,9 @@ export default createStore({
         }
         return 1;
       });
+    },
+    [UPLOAD_POKEMONS](state, payload) {
+      state.pokemons = payload;
     },
   },
   actions: {

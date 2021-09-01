@@ -19,7 +19,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
-import { SET_POKEMON } from './store/mutation.types';
+import { SET_POKEMON, UPLOAD_POKEMONS } from './store/mutation.types';
 
 export default {
   computed: {
@@ -37,12 +37,11 @@ export default {
     };
   },
   methods: {
-    ...mapMutations([SET_POKEMON]),
+    ...mapMutations([SET_POKEMON, UPLOAD_POKEMONS]),
     addPokemon() {
       if (!this.pokemons.find((pokemon) => pokemon.name === this.name)) {
         const promise = fetch(`${this.pokemonURL}${this.name}/`);
         promise.then((response) => response.json()).then((result) => {
-          console.log(result);
           const abilities = [];
 
           this.pokemon.id = this.id;
@@ -72,11 +71,19 @@ export default {
                   );
                 });
                 this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
+                localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
               });
           });
       }
     },
 
+  },
+  mounted() {
+    const storage = window.localStorage;
+    if (storage.length > 0) {
+      const parsedData = JSON.parse(storage.getItem('pokemons'));
+      this.UPLOAD_POKEMONS(parsedData);
+    }
   },
 };
 </script>
