@@ -19,7 +19,14 @@
           </pokemon-abilities>
         </td>
         <td>
-          <a :href="pokemon.pic" target="_blank" rel="noopener noreferrer">Изображение</a>
+          <a
+            @click.prevent="showPic"
+            href="#"
+          >Image
+          </a>
+        </td>
+        <td>
+
         </td>
       </tr>
     </tbody>
@@ -47,6 +54,10 @@ export default {
   //     pokemons: (state) => state.pokemons,
   //   }),
   // },
-
+  methods: {
+    showPic() {
+      window.open(this.pokemon.pic, '', 'width=500, height=500');
+    },
+  },
 };
 </script>

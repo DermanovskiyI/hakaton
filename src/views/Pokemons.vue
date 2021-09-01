@@ -29,6 +29,8 @@
         <th>Stats</th>
         <th>Abilities</th>
         <th>Photo</th>
+        <th>Translate</th>
+        <th>Full description</th>
       </tr>
     </thead>
     <pokemons-item

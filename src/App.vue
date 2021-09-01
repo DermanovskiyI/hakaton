@@ -49,6 +49,7 @@ export default {
           this.pokemon.stats = result.stats;
           this.pokemon.pic = result.sprites.other.dream_world.front_default;
 
+          this.id += 1;
           result.abilities.forEach((item) => {
             const { name } = item.ability;
             abilities.push(name);

@@ -10,6 +10,7 @@ export default createStore({
 
     [SET_POKEMON](state, payload) {
       state.pokemons.push(payload);
+      console.log(payload);
       if (state.pokemons.length >= 10) {
         state.pokemons.shift();
       }
