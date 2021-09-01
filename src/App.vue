@@ -80,7 +80,7 @@ export default {
   },
   mounted() {
     const storage = window.localStorage;
-    if (storage.length > 0) {
+    if (storage.getItem('pokemons')) {
       const parsedData = JSON.parse(storage.getItem('pokemons'));
       this.UPLOAD_POKEMONS(parsedData);
     }
