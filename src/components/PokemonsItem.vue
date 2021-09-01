@@ -18,6 +18,9 @@
           >
           </pokemon-abilities>
         </td>
+        <td>
+          <a :href="pokemon.pic" target="_blank" rel="noopener noreferrer">Изображение</a>
+        </td>
       </tr>
     </tbody>
 </template>

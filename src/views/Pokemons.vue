@@ -28,6 +28,7 @@
         </th>
         <th>Stats</th>
         <th>Abilities</th>
+        <th>Photo</th>
       </tr>
     </thead>
     <pokemons-item

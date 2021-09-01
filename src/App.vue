@@ -42,11 +42,13 @@ export default {
       if (!this.pokemons.find((pokemon) => pokemon.name === this.name)) {
         const promise = fetch(`${this.pokemonURL}${this.name}/`);
         promise.then((response) => response.json()).then((result) => {
+          console.log(result);
           const abilities = [];
 
           this.pokemon.id = this.id;
           this.pokemon.name = result.name;
           this.pokemon.stats = result.stats;
+          this.pokemon.pic = result.sprites.other.dream_world.front_default;
 
           result.abilities.forEach((item) => {
             const { name } = item.ability;
