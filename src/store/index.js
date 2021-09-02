@@ -1,16 +1,18 @@
+/* eslint-disable no-param-reassign */
 import { createStore } from 'vuex';
-import { SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS } from './mutation.types';
+import {
+  SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC,
+} from './mutation.types';
 
 export default createStore({
   state: {
     pokemons: [],
-
+    showModal: false,
   },
   mutations: {
 
     [SET_POKEMON](state, payload) {
       state.pokemons.push(payload);
-      console.log(payload);
       if (state.pokemons.length >= 10) {
         state.pokemons.shift();
       }
@@ -25,6 +27,22 @@ export default createStore({
     },
     [UPLOAD_POKEMONS](state, payload) {
       state.pokemons = payload;
+    },
+    [CLOSE_DESC](state, id) {
+      state.pokemons.forEach((pokemon) => {
+        if (pokemon.id === id) {
+          pokemon.showFullDesc = false;
+          state.showModal = false;
+        }
+      });
+    },
+    [SHOW_DESC](state, id) {
+      state.pokemons.forEach((pokemon) => {
+        if (pokemon.id === id) {
+          pokemon.showFullDesc = true;
+          state.showModal = true;
+        }
+      });
     },
   },
   actions: {

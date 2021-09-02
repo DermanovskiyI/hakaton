@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class:="wrapper" :class="{'wrapper--blured': showModal}">
     <section class="hero">
       <div class="container">
         <div class="search">
@@ -22,9 +22,11 @@ import { mapMutations, mapState } from 'vuex';
 import { SET_POKEMON, UPLOAD_POKEMONS } from './store/mutation.types';
 
 export default {
+
   computed: {
     ...mapState({
       pokemons: (state) => state.pokemons,
+      showModal: (state) => state.showModal,
     }),
   },
   data() {
@@ -34,6 +36,7 @@ export default {
       id: 0,
       pokemonAbilityURL: 'https://pokeapi.co/api/v2/ability/',
       pokemon: {},
+      showMessage: true,
     };
   },
   methods: {
@@ -48,8 +51,10 @@ export default {
           this.pokemon.name = result.name;
           this.pokemon.stats = result.stats;
           this.pokemon.pic = result.sprites.other.dream_world.front_default;
+          this.pokemon.showFullDesc = false;
 
           this.id += 1;
+          this.name = '';
           result.abilities.forEach((item) => {
             const { name } = item.ability;
             abilities.push(name);
@@ -73,6 +78,7 @@ export default {
                 });
                 this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
                 localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
+                this.pokemon = {};
               });
           });
       }
@@ -84,22 +90,34 @@ export default {
     if (storage.getItem('pokemons')) {
       const parsedData = JSON.parse(storage.getItem('pokemons'));
       this.UPLOAD_POKEMONS(parsedData);
+      this.id = this.pokemons.length;
     }
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+html, body {
+  height: 100%;
+}
+body {
+  position: relative;
+}
+section {
+  min-height: 100%;
+}
 #app {
   height: 100%;
 }
-
 .wrapper {
   min-width: 0;
   height: 100%;
   width: 100%;
 }
-
+.wrapper--blured {
+  filter: blur(10px);
+  transition: .3s;
+}
 .container {
   width: auto;
   max-width: 918px;
@@ -144,6 +162,10 @@ a {
 img {
   max-width: 100%;
 }
+button {
+  cursor: pointer;
+}
+
 .search {
   display: flex;
   flex-direction: column;
