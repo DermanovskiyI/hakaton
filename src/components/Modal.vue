@@ -54,7 +54,7 @@ export default {
 
 <style lang="scss" scoped>
 .modal__container {
-  position: absolute;
+  position: fixed;
   top: 10%;
   left: 10%;
   right: 10%;
