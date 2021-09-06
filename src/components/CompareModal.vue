@@ -1,12 +1,16 @@
 <template>
 <div class="compare__table">
-  <ul class="compare__list-stat"> Stat Name
+  <ul class="compare__list-stat">
     <li class="compare__item-stat-name" v-for="item in statName" :key="item">{{item}}</li>
   </ul>
   <ul class="compare__list-pokemon">
     <li class="compare__item-pokemon-name"
       v-for="pokemon in comparedPokemons"
-      :key="pokemon.id">{{pokemon.name}}
+      :key="pokemon.id">
+      <div class="compare__item-pokemon-name-controll">
+        <div class="compare__item-pokemon-name-text">{{pokemon.name}}</div>
+        <button class="compare__item-pokemon-remove" @click="removePokemon(pokemon.id)">X</button>
+      </div>
       <ul class="pokemon-stats__list">
         <li class="pokemon-stats__item"
           v-for="stat in pokemon.stats"
@@ -18,7 +22,8 @@
 </div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
+import { REMOVE_POKEMON_FROM_COMPARE } from '../store/mutation.types';
 
 export default {
   components: {
@@ -33,16 +38,25 @@ export default {
       statName: ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'],
     };
   },
+  methods: {
+    ...mapMutations([REMOVE_POKEMON_FROM_COMPARE]),
+    removePokemon(id) {
+      this.REMOVE_POKEMON_FROM_COMPARE(id);
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
 .compare__table {
-  position: absolute;
+  position: fixed;
   top: 50px;
   right: 0;
   display: flex;
   background: beige;
   padding: 30px;
+}
+.compare__list-stat {
+  padding-top: 20px;
 }
 .compare__list-stat, .compare__item-pokemon-name {
   margin-right: 30px;
@@ -64,6 +78,12 @@ export default {
 }
 .compare__item-pokemon-name:last-child {
   margin-right: 0;
+}
+.compare__item-pokemon-name-controll {
+  display: flex;
+}
+.compare__item-pokemon-name-text {
+  margin-right: 10px;
 }
 .pokemon-stats__list {
   display: flex;

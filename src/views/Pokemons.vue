@@ -232,7 +232,7 @@ tr:last-of-type td:last-child {
   transition: fill .3s;
 }
 .compare {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   width: 200px;

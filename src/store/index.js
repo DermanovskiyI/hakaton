@@ -2,6 +2,7 @@
 import { createStore } from 'vuex';
 import {
   SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC, SET_POKEMON_TO_COMPARE,
+  REMOVE_POKEMON_FROM_COMPARE,
 } from './mutation.types';
 
 export default createStore({
@@ -51,6 +52,9 @@ export default createStore({
           state.comparedPokemons.push(pokemon);
         }
       });
+    },
+    [REMOVE_POKEMON_FROM_COMPARE](state, id) {
+      state.comparedPokemons = state.comparedPokemons.filter((pokemon) => pokemon.id !== id);
     },
   },
   actions: {
