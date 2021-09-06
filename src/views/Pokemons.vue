@@ -1,6 +1,5 @@
 <template>
   <table class="pokemons">
-    <pre>{{sortDirection}}</pre>
     <thead>
       <tr>
         <th class="name">Name
@@ -39,6 +38,16 @@
       :pokemon="pokemon"
     >
     </pokemons-item>
+    <button to="compare" class="compare" type="button"
+        v-if="comparedPokemons.length > 0"
+        @click="showCompare"
+      >
+      {{compareModal.msg}}
+      <teleport to='#modal--compare'>
+        <compare-modal v-if="compareModal.visibility">
+        </compare-modal>
+      </teleport>
+    </button>
   </table>
 </template>
 
@@ -46,20 +55,27 @@
 import { mapState, mapMutations } from 'vuex';
 import PokemonsItem from '../components/PokemonsItem.vue';
 import { SORT_POKEMON } from '../store/mutation.types';
+import CompareModal from '../components/CompareModal.vue';
 
 export default {
   computed: {
     ...mapState({
       pokemons: (state) => state.pokemons,
+      comparedPokemons: (state) => state.comparedPokemons,
     }),
   },
   components: {
     PokemonsItem,
+    CompareModal,
   },
   data() {
     return {
       sorted: false,
       sortDirection: null,
+      compareModal: {
+        visibility: false,
+        msg: 'show compared',
+      },
     };
   },
   methods: {
@@ -74,6 +90,14 @@ export default {
         this.sorted = !this.sorted;
         this.SORT_POKEMON();
       }
+    },
+    showCompare() {
+      if (this.compareModal.msg === 'show compared') {
+        this.compareModal.msg = 'hide compared';
+      } else {
+        this.compareModal.msg = 'show compared';
+      }
+      this.compareModal.visibility = !this.compareModal.visibility;
     },
   },
 };
@@ -172,15 +196,15 @@ tr:last-of-type td:last-child {
   box-shadow: inset -1px -1px 0 #fff;
 }
 
-tbody:hover td {
-  color: transparent;
-  text-shadow: 0 0 3px #aaa;
-}
+// tbody:hover td {
+//   color: transparent;
+//   text-shadow: 0 0 3px #aaa;
+// }
 
-tbody:hover tr:hover td {
-  color: #444;
-  text-shadow: 0 1px 0 #fff;
-}
+// tbody:hover tr:hover td {
+//   color: #444;
+//   text-shadow: 0 1px 0 #fff;
+// }
 .name {
   display: flex;
   align-items: center;
@@ -207,5 +231,33 @@ tbody:hover tr:hover td {
   fill:#00bfff;
   transition: fill .3s;
 }
-
+.compare {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 200px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  height: 25px;
+  text-align:center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+  background-image: linear-gradient(to right, #f5ce62, #e43603, #fa7199, #e85a19);
+  box-shadow: 0 4px 15px 0 rgba(229, 66, 10, 0.75);
+}
+.compare:hover {
+  background-position: 100% 0;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+.compare:focus {
+    outline: none;
+}
 </style>>

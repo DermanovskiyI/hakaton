@@ -86,7 +86,5 @@ export default {
   height: 100%;
   width: 100%;
   background-color: transparent;
-  // overflow-y: auto;
-  // z-index: 10000;
 }
 </style>

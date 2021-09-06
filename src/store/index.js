@@ -1,13 +1,14 @@
 /* eslint-disable no-param-reassign */
 import { createStore } from 'vuex';
 import {
-  SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC,
+  SET_POKEMON, SORT_POKEMON, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC, SET_POKEMON_TO_COMPARE,
 } from './mutation.types';
 
 export default createStore({
   state: {
     pokemons: [],
     showModal: false,
+    comparedPokemons: [],
   },
   mutations: {
 
@@ -41,6 +42,13 @@ export default createStore({
         if (pokemon.id === id) {
           pokemon.showFullDesc = true;
           state.showModal = true;
+        }
+      });
+    },
+    [SET_POKEMON_TO_COMPARE](state, id) {
+      state.pokemons.forEach((pokemon) => {
+        if (pokemon.id === id) {
+          state.comparedPokemons.push(pokemon);
         }
       });
     },
