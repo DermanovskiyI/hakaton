@@ -10,13 +10,12 @@ import { mapState } from 'vuex';
 export default {
   computed: {
     ...mapState({
-      pokemons: (state) => state.pokemons,
+      // pokemons: (state) => state.pokemons,
       showModal: (state) => state.showModal,
     }),
   },
 };
 </script>
-
 <style lang="scss">
 html,
 body {
@@ -30,7 +29,7 @@ section {
   min-height: 100%;
 }
 #app {
-  height: 100%;
+  min-height: 100%;
 }
 .wrapper {
   min-width: 0;

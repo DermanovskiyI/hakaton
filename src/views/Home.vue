@@ -4,52 +4,68 @@
       <div class="search">
         <div class="search__text">enter the name of the pokemon</div>
         <div class="search__block">
-          <input type="text" class="search__input" v-model="name" />
-          <button class="search__btn" type="button" @click="addPokemon">
+          <div class="error"
+            :class="{'error--active': isBadFetch}">Такого покемона не существует!</div>
+          <input type="text" class="search__input" v-model="name" :disabled="isPending" />
+          <button class="search__btn" type="button" @click="addPokemon" :disabled="isPending">
             add
           </button>
         </div>
       </div>
-      <pokemons>
-      </pokemons>
+      <pokemons></pokemons>
+      <paginator></paginator>
+      <loader v-if="isPending"/>
     </div>
   </section>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex';
 import { SET_POKEMON, UPLOAD_POKEMONS } from '../store/mutation.types';
+import { API_URLS } from '../utils/constants';
+import { findPokemon } from '../utils/findPokemon';
 import Pokemons from './Pokemons.vue';
+import Paginator from '../components/Paginator.vue';
+import Loader from '../components/Loader.vue';
 
 export default {
   components: {
     Pokemons,
+    Paginator,
+    Loader,
   },
   computed: {
     ...mapState({
       pokemons: (state) => state.pokemons,
       showModal: (state) => state.showModal,
+      pokemonsToShow: (state) => state.pokemons.length / 10,
     }),
+    // pokemonsToShow: () => this.pokemons,
   },
   data() {
     return {
       name: 'charizard',
-      pokemonURL: 'https://pokeapi.co/api/v2/pokemon/',
       id: 0,
-      pokemonAbilityURL: 'https://pokeapi.co/api/v2/ability/',
       pokemon: {},
       showMessage: true,
+      isPending: false,
+      isBadFetch: false,
     };
   },
   methods: {
     ...mapMutations([SET_POKEMON, UPLOAD_POKEMONS]),
     addPokemon() {
-      if (!this.pokemons.find((pokemon) => pokemon.name === this.name)) {
-        const promise = fetch(`${this.pokemonURL}${this.name}/`);
-        promise
-          .then((response) => response.json())
-          .then((result) => {
-            const abilities = [];
+      const currentPokemon = findPokemon(this.pokemons, 'name', this.name);
 
+      if (!currentPokemon) {
+        this.isPending = true;
+        fetch(`${API_URLS.POKEMON}${this.name}/`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error();
+            }
+            return response.json();
+          })
+          .then((result) => {
             this.pokemon.id = this.id;
             this.pokemon.name = result.name;
             this.pokemon.stats = result.stats;
@@ -58,14 +74,11 @@ export default {
 
             this.id += 1;
             this.name = '';
-            result.abilities.forEach((item) => {
-              const { name } = item.ability;
-              abilities.push(name);
-            });
-            return abilities;
+
+            return result.abilities.reduce((acc, item) => [...acc, item.ability.name], []);
           })
           .then((abilities) => {
-            const requests = abilities.map((ability) => fetch(`${this.pokemonAbilityURL}${ability}`));
+            const requests = abilities.map((ability) => fetch(`${API_URLS.POKEMON_ABILITY}${ability}`));
             Promise.all(requests)
               .then((abilitiesDesc) => Promise.all(abilitiesDesc.map((desc) => desc.json())))
               .then((result) => {
@@ -79,8 +92,14 @@ export default {
                 });
                 this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
                 localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
+                this.isPending = false;
                 this.pokemon = {};
+                this.isBadFetch = false;
               });
+          })
+          .catch(() => {
+            this.isBadFetch = true;
+            this.isPending = false;
           });
       }
     },
@@ -107,5 +126,17 @@ export default {
 }
 .search__input {
   margin-right: 20px;
+}
+.error {
+  color: firebrick;
+  font-weight: 600;
+  display: none;
+}
+.error--active {
+  margin-bottom: 10px;
+  display: block;
+}
+.error--active ~.search__input {
+  border: 2px solid firebrick;
 }
 </style>

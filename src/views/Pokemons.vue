@@ -29,11 +29,11 @@
         <th>Abilities</th>
         <th>Photo</th>
         <th>Translate</th>
-        <th>Full description</th>
+        <th>Description</th>
       </tr>
     </thead>
     <pokemons-item
-      v-for="pokemon in pokemons"
+      v-for="pokemon in sortedPokemons(pokemons)"
       :key="pokemon.id"
       :pokemon="pokemon"
     >
@@ -52,9 +52,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 import PokemonsItem from '../components/PokemonsItem.vue';
-import { SORT_POKEMON } from '../store/mutation.types';
 import CompareModal from '../components/CompareModal.vue';
 
 export default {
@@ -71,24 +70,36 @@ export default {
   data() {
     return {
       sorted: false,
-      sortDirection: null,
       compareModal: {
         visibility: false,
         msg: 'show compared',
       },
+      sortedBy: 'asc',
     };
   },
   methods: {
-    ...mapMutations([SORT_POKEMON]),
+    sortedPokemons(pokemons) {
+      return pokemons.sort((a, b) => {
+        if (this.sortedBy === 'asc') {
+          if (a.name < b.name) {
+            return -1;
+          } if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }
+        if (a.name > b.name) {
+          return -1;
+        } if (a.name < b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    },
     sort() {
-      // if (this.sortDirection === 'from start') {
-      //   this.sortDirection = 'from end';
-      // } else {
-      //   this.sortDirection = 'from start';
-      // }
       if (this.pokemons.length > 1) {
+        this.sortedBy = this.sortedBy === 'asc' ? 'des' : 'asc';
         this.sorted = !this.sorted;
-        this.SORT_POKEMON();
       }
     },
     showCompare() {

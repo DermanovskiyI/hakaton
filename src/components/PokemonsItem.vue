@@ -75,6 +75,7 @@ import PokemonsStat from './PokemonsStat.vue';
 import PokemonAbilities from './PokemonAbilities.vue';
 import Modal from './Modal.vue';
 import { SHOW_DESC, SET_POKEMON_TO_COMPARE } from '../store/mutation.types';
+import { findPokemon } from '../utils/findPokemon';
 
 export default {
   components: {
@@ -103,7 +104,8 @@ export default {
       this.SHOW_DESC(id);
     },
     compare(id) {
-      if (!this.comparedPokemons.find((pokemon) => pokemon.id === id)) {
+      const currentPokemon = findPokemon(this.comparedPokemons, 'id', id);
+      if (!currentPokemon) {
         this.SET_POKEMON_TO_COMPARE(id);
       }
     },
