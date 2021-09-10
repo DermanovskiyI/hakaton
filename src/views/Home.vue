@@ -13,16 +13,20 @@
         </div>
       </div>
       <pokemons></pokemons>
-      <paginator></paginator>
+      <paginator
+        v-if="pokemons.length > 10"
+      >
+      </paginator>
       <loader v-if="isPending"/>
     </div>
   </section>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex';
-import { SET_POKEMON, UPLOAD_POKEMONS } from '../store/mutation.types';
+import { SET_POKEMON, UPLOAD_POKEMONS, SWITCH_PAGE } from '../store/mutation.types';
 import { API_URLS } from '../utils/constants';
 import { findPokemon } from '../utils/findPokemon';
+// import { pageCounting } from '../utils/pageCounting';
 import Pokemons from './Pokemons.vue';
 import Paginator from '../components/Paginator.vue';
 import Loader from '../components/Loader.vue';
@@ -37,9 +41,7 @@ export default {
     ...mapState({
       pokemons: (state) => state.pokemons,
       showModal: (state) => state.showModal,
-      pokemonsToShow: (state) => state.pokemons.length / 10,
     }),
-    // pokemonsToShow: () => this.pokemons,
   },
   data() {
     return {
@@ -52,7 +54,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations([SET_POKEMON, UPLOAD_POKEMONS]),
+    ...mapMutations([SET_POKEMON, UPLOAD_POKEMONS, SWITCH_PAGE]),
     addPokemon() {
       const currentPokemon = findPokemon(this.pokemons, 'name', this.name);
 
@@ -103,6 +105,7 @@ export default {
           });
       }
     },
+
   },
   mounted() {
     const storage = window.localStorage;
@@ -111,6 +114,7 @@ export default {
       this.UPLOAD_POKEMONS(parsedData);
       this.id = this.pokemons.length;
     }
+    this.SWITCH_PAGE();
   },
 };
 </script>

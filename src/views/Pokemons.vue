@@ -33,7 +33,7 @@
       </tr>
     </thead>
     <pokemons-item
-      v-for="pokemon in sortedPokemons(pokemons)"
+      v-for="pokemon in sortedPokemons(pages.pokemonsToShow)"
       :key="pokemon.id"
       :pokemon="pokemon"
     >
@@ -61,6 +61,7 @@ export default {
     ...mapState({
       pokemons: (state) => state.pokemons,
       comparedPokemons: (state) => state.comparedPokemons,
+      pages: (state) => state.pages,
     }),
   },
   components: {
