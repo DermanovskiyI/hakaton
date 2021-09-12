@@ -25,7 +25,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import { pageCounting } from '../utils/pageCounting';
-import { NEXT_PAGE, PREV_PAGE, SWITCH_PAGE } from '../store/mutation.types';
+import { NEXT_PAGE, PREV_PAGE, SET_PAGE } from '../store/mutation.types';
 
 export default {
   computed: {
@@ -36,7 +36,7 @@ export default {
     }),
   },
   methods: {
-    ...mapMutations([NEXT_PAGE, PREV_PAGE, SWITCH_PAGE]),
+    ...mapMutations([NEXT_PAGE, PREV_PAGE, SET_PAGE]),
     nextPage() {
       this.NEXT_PAGE();
     },
@@ -44,7 +44,7 @@ export default {
       this.PREV_PAGE();
     },
     setNewPage(pageNumber) {
-      this.SWITCH_PAGE(pageNumber);
+      this.SET_PAGE(pageNumber);
     },
   },
 };

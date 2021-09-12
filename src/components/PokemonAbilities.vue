@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div><b>{{ability.name}}:</b></div>
+  <div class="ability__text">
+    <div class="ability__name"><b>{{ability.name}}:</b></div>
     <div>{{ability.desc}}</div>
   </div>
 </template>
@@ -20,3 +20,14 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.ability__text {
+  margin-bottom: 10px;
+}
+.ability__text:last-child {
+  margin-bottom: 0px;
+}
+.ability__name {
+  margin-bottom: 5px;
+}
+</style>

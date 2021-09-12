@@ -17,6 +17,13 @@ export default {
 };
 </script>
 <style lang="scss">
+@font-face {
+  font-family: 'Roboto';
+  src: url('./layout/fonts/robotocondensed-regular-webfont.woff2') format('woff2'),
+        url('./layout/fonts/robotocondensed-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 html,
 body {
   height: 100%;
@@ -24,6 +31,7 @@ body {
 body {
   position: relative;
   margin: 0;
+  font-family: Roboto;
 }
 section {
   min-height: 100%;
@@ -35,6 +43,7 @@ section {
   min-width: 0;
   height: 100%;
   width: 100%;
+  min-height: 100%;
 }
 .wrapper--blured {
   filter: blur(10px);
@@ -42,7 +51,7 @@ section {
 }
 .container {
   width: auto;
-  max-width: 918px;
+  max-width: 1100px;
   height: 100%;
   margin: 0 auto;
   display: flex;

@@ -50,11 +50,17 @@
         <a
           @click.prevent="showPic"
           href="#"
-        >Image
+        >
+          <div class="pokemon__pic">
+            <pokemon-svg></pokemon-svg>
+          </div>
         </a>
       </td>
       <td>
-        тут будет перевод
+        <form action="">
+          <input type="text" placeholder="you can add smth">
+          <button>добавить</button>
+        </form>
       </td>
       <td>
         <button type="button" @click="setModal(pokemon.id)">show</button>
@@ -76,12 +82,14 @@ import PokemonAbilities from './PokemonAbilities.vue';
 import Modal from './Modal.vue';
 import { SHOW_DESC, SET_POKEMON_TO_COMPARE } from '../store/mutation.types';
 import { findPokemon } from '../utils/findPokemon';
+import PokemonSvg from './PokemonSvg.vue';
 
 export default {
   components: {
     PokemonsStat,
     PokemonAbilities,
     Modal,
+    PokemonSvg,
   },
   props: {
     pokemon: {
@@ -132,5 +140,4 @@ export default {
   fill: rgb(247, 9, 21);
   transition: fill .3s;
 }
-
 </style>

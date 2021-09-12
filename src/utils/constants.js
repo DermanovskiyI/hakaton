@@ -1,5 +1,5 @@
-export const API_URLS = {
-  POKEMON: 'https://pokeapi.co/api/v2/pokemon/',
-  POKEMON_ABILITY: 'https://pokeapi.co/api/v2/ability/',
+export const SORTING = {
+  ASC: 'ascending',
+  DES: 'descending',
 };
-export default API_URLS;
+export default SORTING;

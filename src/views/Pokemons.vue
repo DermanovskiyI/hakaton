@@ -1,11 +1,11 @@
 <template>
   <table class="pokemons">
     <thead>
-      <tr>
+      <tr class="pokemons__header">
         <th class="name">Name
           <div class="name__arrow"
             @click="sort"
-            :class="{'name__arrow--active': sorted }"
+            :class="{'name__arrow--active': sortedBy === SORTING.DES }"
           >
             <svg class="name__arrow-pic" version="1.1"
               xmlns="http://www.w3.org/2000/svg"
@@ -25,15 +25,15 @@
             </svg>
           </div>
         </th>
-        <th>Stats</th>
-        <th>Abilities</th>
-        <th>Photo</th>
-        <th>Translate</th>
-        <th>Description</th>
+        <th class="stats">Stats</th>
+        <th class="abilities">Abilities</th>
+        <th class="photo">Photo</th>
+        <th class="translate">Translate</th>
+        <th class="desc">Description</th>
       </tr>
     </thead>
     <pokemons-item
-      v-for="pokemon in sortedPokemons(pages.pokemonsToShow)"
+      v-for="pokemon in sortedPokemons(pages.shownPokemons)"
       :key="pokemon.id"
       :pokemon="pokemon"
     >
@@ -55,6 +55,8 @@
 import { mapState } from 'vuex';
 import PokemonsItem from '../components/PokemonsItem.vue';
 import CompareModal from '../components/CompareModal.vue';
+import { sortPokemons } from '../utils/sortPokemons';
+import { SORTING } from '../utils/constants';
 
 export default {
   computed: {
@@ -68,39 +70,25 @@ export default {
     PokemonsItem,
     CompareModal,
   },
+  created() {
+    this.SORTING = SORTING;
+  },
   data() {
     return {
-      sorted: false,
       compareModal: {
         visibility: false,
         msg: 'show compared',
       },
-      sortedBy: 'asc',
+      sortedBy: SORTING.ASC,
     };
   },
   methods: {
     sortedPokemons(pokemons) {
-      return pokemons.sort((a, b) => {
-        if (this.sortedBy === 'asc') {
-          if (a.name < b.name) {
-            return -1;
-          } if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        }
-        if (a.name > b.name) {
-          return -1;
-        } if (a.name < b.name) {
-          return 1;
-        }
-        return 0;
-      });
+      return sortPokemons(pokemons, this.sortedBy);
     },
     sort() {
       if (this.pokemons.length > 1) {
-        this.sortedBy = this.sortedBy === 'asc' ? 'des' : 'asc';
-        this.sorted = !this.sorted;
+        this.sortedBy = this.sortedBy === SORTING.ASC ? SORTING.DES : SORTING.ASC;
       }
     },
     showCompare() {
@@ -125,10 +113,7 @@ table {
   border-collapse: separate;
   box-shadow: inset 0 1px 0 #fff;
   font-size: 12px;
-  line-height: 24px;
-  margin: 30px auto;
-  text-align: left;
-  width: 800px;
+  width: 100%;
 }
 
 th {
@@ -188,10 +173,6 @@ td:last-child {
   box-shadow: inset -1px 0 0 #fff;
 }
 
-// tr {
-//   background: url(https://jackrugile.com/images/misc/noise-diagonal.png);
-// }
-
 tr:nth-child(odd) td {
   background: #f1f1f1;
 }
@@ -208,19 +189,11 @@ tr:last-of-type td:last-child {
   box-shadow: inset -1px -1px 0 #fff;
 }
 
-// tbody:hover td {
-//   color: transparent;
-//   text-shadow: 0 0 3px #aaa;
-// }
-
-// tbody:hover tr:hover td {
-//   color: #444;
-//   text-shadow: 0 1px 0 #fff;
-// }
 .name {
   display: flex;
   align-items: center;
 }
+
 .name__arrow {
   display: flex;
   margin-left: 10px;
@@ -235,10 +208,6 @@ tr:last-of-type td:last-child {
 .name__arrow-pic {
   transition: fill .3s;
 }
-// .name__arrow:hover .name__arrow-pic:hover {
-//   fill:#00bfff;
-//   transition: fill .3s;
-// }
 .name__arrow-pic:hover {
   fill:#00bfff;
   transition: fill .3s;
