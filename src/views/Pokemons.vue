@@ -5,7 +5,7 @@
         <th class="name">Name
           <div class="name__arrow"
             @click="sort"
-            :class="{'name__arrow--active': sortedBy === SORTING.DES }"
+            :class="{'name__arrow--active': sortedBy === SORTING.DES}"
           >
             <svg class="name__arrow-pic" version="1.1"
               xmlns="http://www.w3.org/2000/svg"
@@ -27,8 +27,7 @@
         </th>
         <th class="stats">Stats</th>
         <th class="abilities">Abilities</th>
-        <th class="photo">Photo</th>
-        <th class="translate">Translate</th>
+        <th class="comments">Comments</th>
         <th class="desc">Description</th>
       </tr>
     </thead>
@@ -80,6 +79,10 @@ export default {
         msg: 'show compared',
       },
       sortedBy: SORTING.ASC,
+      test: {
+        currentPage: 1,
+        shownPokemon: [],
+      },
     };
   },
   methods: {

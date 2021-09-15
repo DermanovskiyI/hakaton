@@ -2,7 +2,7 @@
 import { createStore } from 'vuex';
 import {
   SET_POKEMONS, SET_ID, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC, SET_POKEMON_TO_COMPARE,
-  REMOVE_POKEMON_FROM_COMPARE, NEXT_PAGE, PREV_PAGE, SET_PAGE,
+  REMOVE_POKEMON_FROM_COMPARE, NEXT_PAGE, PREV_PAGE, SET_PAGE, ADD_COMMENT,
 } from './mutation.types';
 import { filteredItems } from '../utils/filteredItems';
 import { pageCounting } from '../utils/pageCounting';
@@ -59,19 +59,38 @@ export default createStore({
     },
     [NEXT_PAGE](state) {
       if (state.pages.currentPage < pageCounting(state.pokemons.length)) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
         state.pages.currentPage += 1;
         state.pages.shownPokemons = filteredItems(state.pages.currentPage, state.pokemons);
       }
     },
     [PREV_PAGE](state) {
       if (state.pages.currentPage > 1) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
         state.pages.currentPage -= 1;
         state.pages.shownPokemons = filteredItems(state.pages.currentPage, state.pokemons);
       }
     },
     [SET_PAGE](state, page = 1) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
       state.pages.currentPage = page;
       state.pages.shownPokemons = filteredItems(page, state.pokemons);
+    },
+    [ADD_COMMENT](state, payload) {
+      state.pokemons.forEach((pokemon) => {
+        if (pokemon.id === payload.id) {
+          pokemon.comments.unshift(payload.comment);
+        }
+      });
     },
   },
   actions: {

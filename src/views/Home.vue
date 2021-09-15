@@ -2,19 +2,21 @@
   <section class="hero">
     <div class="container">
       <button @click="devMode=!devMode">developer mode {{devMode ? 'on' : 'off'}}</button>
-      <div class="search">
+      <form class="search" @submit="addPokemon">
         <div class="search__text">enter the name of the pokemon</div>
         <div class="search__block">
           <div class="error"
+            v-if="status.error"
             :class="{'error--active': status.error}">Такого покемона не существует!</div>
-          <input type="text" class="search__input" v-model="name" :disabled="isPending"
+          <input type="text" class="search__input" v-model="name" :disabled="status.isFetching"
             @keydown="validateVal($event)"
           />
-          <button class="search__btn" type="button" @click="addPokemon" :disabled="isPending">
+          <button class="search__btn" type="submit"
+            :disabled="status.isFetching">
             add
           </button>
         </div>
-      </div>
+      </form>
       <pokemons></pokemons>
       <paginator
         v-if="pokemons.length > 10"
@@ -26,11 +28,8 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex';
-// import { SET_POKEMON, UPLOAD_POKEMONS, SWITCH_PAGE } from '../store/mutation.types';
 import { SET_PAGE, UPLOAD_POKEMONS } from '../store/mutation.types';
-// import { API_URLS } from '../utils/constants';
 import { findPokemon } from '../utils/findPokemon';
-// import { pageCounting } from '../utils/pageCounting';
 import Pokemons from './Pokemons.vue';
 import Paginator from '../components/Paginator.vue';
 import Loader from '../components/Loader.vue';
@@ -52,15 +51,11 @@ export default {
     return {
       name: '',
       id: 0,
-      pokemon: {},
       showMessage: true,
-      isPending: false,
-      isBadFetch: false,
       devMode: false,
     };
   },
   methods: {
-    // ...mapMutations([SET_POKEMON, UPLOAD_POKEMONS, SWITCH_PAGE]),
     ...mapMutations([UPLOAD_POKEMONS, SET_PAGE]),
     ...mapActions(['getPokemon']),
     addPokemon() {
@@ -71,50 +66,6 @@ export default {
           this.name = '';
         }
       }
-
-      // if (!currentPokemon) {
-      //   this.isPending = true;
-      //   fetch(`${API_URLS.POKEMON}${this.name}/`)
-      //     .then((response) => response.json())
-      //     .then((result) => {
-      //       this.pokemon.id = this.id;
-      //       this.pokemon.name = result.name;
-      //       this.pokemon.stats = result.stats;
-      //       this.pokemon.pic = result.sprites.other.dream_world.front_default;
-      //       this.pokemon.showFullDesc = false;
-
-      //       this.id += 1;
-      //       this.name = '';
-
-      //       return result.abilities.reduce((acc, item) => [...acc, item.ability.name], []);
-      //     })
-      //     .then((abilities) => {
-      //       const requests = abilities.map((ability) =>
-      // fetch(`${API_URLS.POKEMON_ABILITY}${ability}`));
-      //       Promise.all(requests)
-      //         .then((abilitiesDesc) => Promise.all(abilitiesDesc.map((desc) => desc.json())))
-      //         .then((result) => {
-      //           const abilityDesc = [];
-      //           result.forEach((desc, ndx) => {
-      //             abilityDesc.push({
-      //               desc: desc.effect_entries[1].effect,
-      //               id: ndx,
-      //               name: desc.name,
-      //             });
-      //           });
-      //           this.SET_POKEMON({ ...this.pokemon, abilities: abilityDesc });
-      //           this.SWITCH_PAGE();
-      //           localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
-      //           this.isPending = false;
-      //           this.pokemon = {};
-      //           this.isBadFetch = false;
-      //         });
-      //     })
-      //     .catch(() => {
-      //       this.isBadFetch = true;
-      //       this.isPending = false;
-      //     });
-      // }
     },
     validateVal(e) {
       if (this.devMode) {
@@ -137,7 +88,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .hero {
   padding: 30px;
 }
@@ -156,7 +107,6 @@ export default {
 .error {
   color: firebrick;
   font-weight: 600;
-  display: none;
 }
 .error--active {
   margin-bottom: 10px;

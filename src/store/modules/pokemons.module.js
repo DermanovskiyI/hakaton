@@ -45,6 +45,7 @@ const actions = {
           pokemon.stats = result.stats;
           pokemon.pic = result.sprites.other.dream_world.front_default;
           pokemon.showFullDesc = false;
+          pokemon.comments = [];
 
           return result.abilities.reduce((acc, item) => [...acc, item.ability.name], []);
         })
