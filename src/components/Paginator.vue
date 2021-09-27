@@ -10,7 +10,7 @@
       :key="n"
     >
       <a href="#" class="paginator__link"
-        :class="{'paginatior__link--active': n==pages.currentPage}"
+        :class="{'paginatior__link--active': n==currentPage}"
         @click.prevent="setNewPage(n)"
       >{{n}}</a>
     </li>
@@ -32,7 +32,7 @@ export default {
     ...mapState({
       pokemons: (state) => state.pokemons,
       pageCount: (state) => pageCounting(state.pokemons.length),
-      pages: (state) => state.pages,
+      currentPage: (state) => state.currentPage,
     }),
   },
   methods: {

@@ -1,5 +1,8 @@
-export const API_URLS = {
-  POKEMON: 'https://pokeapi.co/api/v2/pokemon/',
-  POKEMON_ABILITY: 'https://pokeapi.co/api/v2/ability/',
-};
-export default API_URLS;
+import axios from 'axios';
+
+const instance = axios.create({
+  baseURL: 'https://pokeapi.co/api/v2',
+});
+
+export const fetchPokemon = (name) => instance.get(`/pokemon/${name}`);
+export const fetchAbility = (ability) => instance.get(`/ability/${ability}`);

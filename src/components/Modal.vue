@@ -24,16 +24,11 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapMutations } from 'vuex';
 import ModalStat from './ModalStat.vue';
 import { CLOSE_DESC } from '../store/mutation.types';
 
 export default {
-  computed: {
-    ...mapState({
-      showModal: (state) => state.showModal,
-    }),
-  },
   props: {
     pokemon: {
       type: Object,

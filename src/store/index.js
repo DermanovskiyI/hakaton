@@ -1,41 +1,32 @@
 /* eslint-disable no-param-reassign */
 import { createStore } from 'vuex';
 import {
-  SET_POKEMONS, SET_ID, UPLOAD_POKEMONS, SHOW_DESC, CLOSE_DESC, SET_POKEMON_TO_COMPARE,
-  REMOVE_POKEMON_FROM_COMPARE, NEXT_PAGE, PREV_PAGE, SET_PAGE, ADD_COMMENT,
+  SET_POKEMONS, UPLOAD_POKEMONS, CLOSE_DESC, SHOW_DESC,
+  NEXT_PAGE, PREV_PAGE, SET_PAGE, ADD_COMMENT, SET_SORT_TYPE,
 } from './mutation.types';
-import { filteredItems } from '../utils/filteredItems';
 import { pageCounting } from '../utils/pageCounting';
 import pokemonsModule from './modules/pokemons.module';
+import { setLocalStorage } from '../utils/localStorage';
+import { SORTING } from '../utils/constants';
 
 export default createStore({
   state: {
     pokemons: [],
-    pages: {
-      currentPage: 1,
-      shownPokemons: [],
-    },
-    showModal: false,
-    comparedPokemons: [],
-    id: 0,
+    currentPage: 1,
+    sortedBy: SORTING.ASC,
   },
   mutations: {
 
     [SET_POKEMONS](state, pokemon) {
       state.pokemons.push(pokemon);
     },
-    [SET_ID](state) {
-      state.id += 1;
-    },
     [UPLOAD_POKEMONS](state, payload) {
       state.pokemons = payload;
-      state.id = payload[payload.length - 1].id;
     },
     [CLOSE_DESC](state, id) {
       state.pokemons.forEach((pokemon) => {
         if (pokemon.id === id) {
           pokemon.showFullDesc = false;
-          state.showModal = false;
         }
       });
     },
@@ -43,47 +34,21 @@ export default createStore({
       state.pokemons.forEach((pokemon) => {
         if (pokemon.id === id) {
           pokemon.showFullDesc = true;
-          state.showModal = true;
         }
       });
-    },
-    [SET_POKEMON_TO_COMPARE](state, id) {
-      state.pokemons.forEach((pokemon) => {
-        if (pokemon.id === id) {
-          state.comparedPokemons.push(pokemon);
-        }
-      });
-    },
-    [REMOVE_POKEMON_FROM_COMPARE](state, id) {
-      state.comparedPokemons = state.comparedPokemons.filter((pokemon) => pokemon.id !== id);
     },
     [NEXT_PAGE](state) {
-      if (state.pages.currentPage < pageCounting(state.pokemons.length)) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-        state.pages.currentPage += 1;
-        state.pages.shownPokemons = filteredItems(state.pages.currentPage, state.pokemons);
+      if (state.currentPage < pageCounting(state.pokemons.length)) {
+        state.currentPage += 1;
       }
     },
     [PREV_PAGE](state) {
-      if (state.pages.currentPage > 1) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-        state.pages.currentPage -= 1;
-        state.pages.shownPokemons = filteredItems(state.pages.currentPage, state.pokemons);
+      if (state.currentPage > 1) {
+        state.currentPage -= 1;
       }
     },
     [SET_PAGE](state, page = 1) {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-      state.pages.currentPage = page;
-      state.pages.shownPokemons = filteredItems(page, state.pokemons);
+      state.currentPage = page;
     },
     [ADD_COMMENT](state, payload) {
       state.pokemons.forEach((pokemon) => {
@@ -92,15 +57,28 @@ export default createStore({
         }
       });
     },
+    [SET_SORT_TYPE](state) {
+      if (state.pokemons.length > 1) {
+        state.sortedBy = state.sortedBy === SORTING.ASC ? SORTING.DES : SORTING.ASC;
+      }
+    },
   },
   actions: {
     setPokemon({ commit, state }) {
       const { pokemon } = state.pokemonsModule;
-      commit(SET_ID);
-      commit(SET_POKEMONS, { ...pokemon, id: state.id });
-      commit(SET_PAGE, state.pages.currentPage);
-      localStorage.setItem('pokemons', JSON.stringify(state.pokemons));
+      commit(SET_POKEMONS, pokemon);
+      setLocalStorage('pokemons', state.pokemons);
     },
+    // async setForms({ commit, state }, pokemonName) {
+    //   // const request = await fetch(`https://pokeapi.co/api/v2/pokemon-form/${pokemonName}`);
+    //   // const response = await request.json();
+    //   // console.log(response);
+    //   // commit('setPokemonForms', response);
+
+    //   const { data } = await fetchForms(pokemonName);
+    //   console.log(data);
+    //   commit('setPokemonForms', data);
+    // },
   },
   modules: {
     pokemonsModule,

@@ -73,14 +73,3 @@
   </g>
 </svg>
 </template>
-
-<style lang="scss" scoped>
-.pokemon__pic-svg:hover {
-  animation: pokemon__pic-svg 1s ease infinite;
-}
-@keyframes pokemon__pic-svg {
-0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-40% {transform: translateY(-30px);}
-60% {transform: translateY(-15px);}
-}
-</style>

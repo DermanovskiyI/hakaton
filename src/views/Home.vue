@@ -8,7 +8,9 @@
           <div class="error"
             v-if="status.error"
             :class="{'error--active': status.error}">Такого покемона не существует!</div>
-          <input type="text" class="search__input" v-model="name" :disabled="status.isFetching"
+          <input type="text" class="search__input"
+            v-model="pokemon.name"
+            :disabled="status.isFetching"
             @keydown="validateVal($event)"
           />
           <button class="search__btn" type="submit"
@@ -28,11 +30,12 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex';
-import { SET_PAGE, UPLOAD_POKEMONS } from '../store/mutation.types';
+import { UPLOAD_POKEMONS } from '../store/mutation.types';
 import { findPokemon } from '../utils/findPokemon';
 import Pokemons from './Pokemons.vue';
 import Paginator from '../components/Paginator.vue';
 import Loader from '../components/Loader.vue';
+import { getLocalStorage } from '../utils/localStorage';
 
 export default {
   components: {
@@ -43,27 +46,30 @@ export default {
   computed: {
     ...mapState({
       pokemons: (state) => state.pokemons,
-      showModal: (state) => state.showModal,
       status: (state) => state.pokemonsModule.status,
     }),
   },
   data() {
     return {
-      name: '',
-      id: 0,
-      showMessage: true,
+      pokemon: {
+        name: '',
+        id: 0,
+      },
       devMode: false,
     };
   },
   methods: {
-    ...mapMutations([UPLOAD_POKEMONS, SET_PAGE]),
+    ...mapMutations([UPLOAD_POKEMONS]),
     ...mapActions(['getPokemon']),
     addPokemon() {
-      const currentPokemon = findPokemon(this.pokemons, 'name', this.name);
-      if (!currentPokemon) {
-        this.getPokemon(this.name);
+      const currentPokemon = findPokemon(this.pokemons, 'name', this.pokemon.name);
+      // eslint-disable-next-line no-debugger
+      // debugger;
+      if (!currentPokemon && this.pokemon.name !== '') {
+        this.getPokemon(this.pokemon);
         if (!this.status.isFetched) {
-          this.name = '';
+          this.pokemon.name = '';
+          this.pokemon.id += 1;
         }
       }
     },
@@ -79,11 +85,11 @@ export default {
   mounted() {
     const storage = window.localStorage;
     if (storage.getItem('pokemons')) {
-      const parsedData = JSON.parse(storage.getItem('pokemons'));
-      this.UPLOAD_POKEMONS(parsedData);
-      this.id = this.pokemons.length;
+      const pokemons = getLocalStorage('pokemons');
+      const lastElem = pokemons[pokemons.length - 1];
+      this.UPLOAD_POKEMONS(pokemons);
+      this.pokemon.id = lastElem.id;
     }
-    this.SET_PAGE();
   },
 };
 </script>

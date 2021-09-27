@@ -7,21 +7,9 @@
             @click="sort"
             :class="{'name__arrow--active': sortedBy === SORTING.DES}"
           >
-            <svg class="name__arrow-pic" version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-              width="20px" height="20px"
-              viewBox="0 0 284.929 284.929">
-              <g>
-                <path d="M282.082,195.285L149.028,62.24c-1.901-1.903-4.088-2.856-6.562-2.856s-4.665,
-                  0.953-6.567,2.856L2.856,195.285
-                  C0.95,197.191,0,199.378,0,201.853c0,2.474,0.953,4.664,2.856,
-                  6.566l14.272,14.271c1.903,1.903,4.093,2.854,6.567,2.854
-                  c2.474,0,4.664-0.951,6.567-2.854l112.204-112.202l112.208,
-                  112.209c1.902,1.903,4.093,2.848,6.563,2.848
-                  c2.478,0,4.668-0.951,6.57-2.848l14.274-14.277c1.902-1.902,2.847-4.093,2.847-6.566
-                  C284.929,199.378,283.984,197.188,282.082,195.285z"/>
-              </g>
+            <svg class="name__arrow-pic"
+              width="20px" height="20px">
+              <use xlink:href="../assets/sprites/sprite.svg#arrow"></use>
             </svg>
           </div>
         </th>
@@ -32,9 +20,10 @@
       </tr>
     </thead>
     <pokemons-item
-      v-for="pokemon in sortedPokemons(pages.shownPokemons)"
+      v-for="pokemon in filterPokemons(pokemons)"
       :key="pokemon.id"
       :pokemon="pokemon"
+      @addToCompare="addToCompare"
     >
     </pokemons-item>
     <button to="compare" class="compare" type="button"
@@ -43,7 +32,10 @@
       >
       {{compareModal.msg}}
       <teleport to='#modal--compare'>
-        <compare-modal v-if="compareModal.visibility">
+        <compare-modal v-if="compareModal.visibility"
+          :comparedPokemons="comparedPokemons"
+          @removeFromCompare="removeFromCompare"
+        >
         </compare-modal>
       </teleport>
     </button>
@@ -51,18 +43,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import PokemonsItem from '../components/PokemonsItem.vue';
 import CompareModal from '../components/CompareModal.vue';
 import { sortPokemons } from '../utils/sortPokemons';
 import { SORTING } from '../utils/constants';
+import { filteredItems } from '../utils/filteredItems';
+import { findPokemon } from '../utils/findPokemon';
+import { SET_SORT_TYPE } from '../store/mutation.types';
 
 export default {
   computed: {
     ...mapState({
-      pokemons: (state) => state.pokemons,
-      comparedPokemons: (state) => state.comparedPokemons,
-      pages: (state) => state.pages,
+      // pokemons: (state) => filteredItems(state.currentPage, state.pokemons),
+      pokemons: (state) => sortPokemons(state.pokemons, state.sortedBy),
+      currentPage: (state) => state.currentPage,
+      sortedBy: (state) => state.sortedBy,
     }),
   },
   components: {
@@ -78,21 +74,17 @@ export default {
         visibility: false,
         msg: 'show compared',
       },
-      sortedBy: SORTING.ASC,
-      test: {
-        currentPage: 1,
-        shownPokemon: [],
-      },
+      comparedPokemons: [],
     };
   },
   methods: {
-    sortedPokemons(pokemons) {
-      return sortPokemons(pokemons, this.sortedBy);
-    },
+    ...mapMutations([SET_SORT_TYPE]),
+
     sort() {
-      if (this.pokemons.length > 1) {
-        this.sortedBy = this.sortedBy === SORTING.ASC ? SORTING.DES : SORTING.ASC;
-      }
+      this.SET_SORT_TYPE();
+    },
+    filterPokemons(pokemons) {
+      return filteredItems(this.currentPage, pokemons);
     },
     showCompare() {
       if (this.compareModal.msg === 'show compared') {
@@ -101,6 +93,30 @@ export default {
         this.compareModal.msg = 'show compared';
       }
       this.compareModal.visibility = !this.compareModal.visibility;
+    },
+    addToCompare(pokemonToCompare) {
+      const currentPokemon = findPokemon(this.comparedPokemons, 'id', pokemonToCompare.id);
+      if (!currentPokemon) {
+        this.pokemons.forEach((pokemon) => {
+          if (pokemon.id === pokemonToCompare.id) {
+            this.comparedPokemons.push(pokemonToCompare);
+          }
+        });
+      } else {
+        this.comparedPokemons = this.comparedPokemons
+          .filter((pokemon) => pokemon.id !== pokemonToCompare.id);
+      }
+    },
+    removeFromCompare(id) {
+      this.comparedPokemons = this.comparedPokemons.filter((pokemon) => pokemon.id !== id);
+    },
+  },
+  watch: {
+    currentPage() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     },
   },
 };
@@ -244,4 +260,39 @@ tr:last-of-type td:last-child {
 .compare:focus {
     outline: none;
 }
+.comments__form {
+  display: flex;
+  align-items: center;
+}
+.comments__list {
+  margin-bottom: 10px;
+  overflow-y: scroll;
+  max-height: 100px;
+  height: 100px;
+}
+.comments__item {
+  text-align: center;
+  padding: 7px 0;
+  border-radius: 10px;
+}
+.comments__item:nth-child(even) {
+  background: #fff;
+}
+.error {
+  color: firebrick;
+  font-weight: 600;
+}
+.comments__input {
+  resize: none;
+  margin-right: 10px;
+  border: 1px solid purple;
+  border-radius: 10px;
+  text-indent: 10px;
+}
+.comments__input:focus {
+  outline: none;
+}
+// .btn {
+//   border: none;
+// }
 </style>>

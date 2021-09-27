@@ -9,7 +9,12 @@
       :key="pokemon.id">
       <div class="compare__item-pokemon-name-controll">
         <div class="compare__item-pokemon-name-text">{{pokemon.name}}</div>
-        <button class="compare__item-pokemon-remove" @click="removePokemon(pokemon.id)">X</button>
+        <button class="compare__item-pokemon-remove" @click="removePokemon(pokemon.id)">
+          <svg class=".comments__remove-pic"
+            width="20px" height="20px">
+            <use :xlink:href="`${sprite}#delete`"></use>
+          </svg>
+        </button>
       </div>
       <ul class="pokemon-stats__list">
         <li class="pokemon-stats__item"
@@ -22,26 +27,24 @@
 </div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex';
-import { REMOVE_POKEMON_FROM_COMPARE } from '../store/mutation.types';
+import sprite from '@/assets/sprites/sprite.svg';
 
 export default {
-  components: {
-  },
-  computed: {
-    ...mapState({
-      comparedPokemons: (state) => state.comparedPokemons,
-    }),
+  props: {
+    comparedPokemons: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
       statName: ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'],
+      sprite,
     };
   },
   methods: {
-    ...mapMutations([REMOVE_POKEMON_FROM_COMPARE]),
     removePokemon(id) {
-      this.REMOVE_POKEMON_FROM_COMPARE(id);
+      this.$emit('removeFromCompare', id);
     },
   },
 };
@@ -89,5 +92,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.compare__item-pokemon-remove {
+  border: none;
 }
 </style>

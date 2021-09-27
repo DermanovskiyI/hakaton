@@ -1,5 +1,6 @@
 <template>
-  <div class:="wrapper" :class="{'wrapper--blured': showModal}">
+  <div class:="wrapper"
+    :class="{'wrapper--blured': pokemons.find((pokemon)=>pokemon.showFullDesc)}">
     <router-view></router-view>
   </div>
 </template>
@@ -10,8 +11,8 @@ import { mapState } from 'vuex';
 export default {
   computed: {
     ...mapState({
-      // pokemons: (state) => state.pokemons,
-      showModal: (state) => state.showModal,
+      pokemons: (state) => state.pokemons,
+      // showModal: (state) => state.showModal,
     }),
   },
 };
